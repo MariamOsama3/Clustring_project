@@ -23,6 +23,29 @@ def main():
     # Visualize
     plot_pca_clusters(news_vectors, kmeans_labels)
     plot_tsne_clusters(news_vectors, kmeans_labels)
+
+    # Hierarchical clustering
+    linkage_matrix = get_linkage_matrix(news_vectors[:200])  # Use subset for dendrogram
+    plot_dendrogram(linkage_matrix)
+
+    # Use Word2Vec
+    print("\nApplying Word2Vec clustering...")
+    # Tokenize text
+    tokenized = news_df['cleaned_text'].apply(lambda x: x.split())
+    
+    # Train Word2Vec model
+    w2v_model = train_word2vec(tokenized)  # Using imported function
+    
+    # Create document vectors
+    doc_vectors = np.array([document_vector(doc, w2v_model) for doc in tokenized])
+    
+    # Cluster with KMeans
+    k = 3  # Using optimal k from elbow method
+    w2v_labels = kmeans_clustering(doc_vectors, n_clusters=k)  # Using imported function
+    
+    # Evaluate
+    sil_score = silhouette_score(doc_vectors, w2v_labels)
+    print(f"Word2Vec clustering Silhouette Score: {sil_score:.4f}")
     
     # Load and preprocess Wikipedia data
     print("\nProcessing Wikipedia dataset...")
@@ -37,6 +60,17 @@ def main():
     hier_labels = hierarchical_clustering(wiki_vectors, n_clusters=15)
     sil_score = calculate_silhouette_score(wiki_vectors, hier_labels)
     print(f"Hierarchical - Silhouette: {sil_score:.4f}")
+
+    # KMeans clustering
+    kmeans_labels = kmeans_clustering(wiki_vectors, n_clusters=DEFAULT_N_CLUSTERS)
+    sil_score = calculate_silhouette_score(wiki_vectors, kmeans_labels)
+    print(f"KMeans - Silhouette: {sil_score:.4f})
+    
+    # Visualize
+    plot_pca_clusters(wiki_vectors, kmeans_labels)
+    plot_tsne_clusters(wiki_vectors, kmeans_labels)
+
+
 
 if __name__ == "__main__":
     main()
