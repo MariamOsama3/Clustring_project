@@ -1,3 +1,7 @@
+from gensim.models import Word2Vec
+rom sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.preprocessing import Normalizer
+
 def vectorize_text(text_series, vectorizer_type='tfidf', max_features=15000):
     vectorizer = TfidfVectorizer(max_features=max_features) if vectorizer_type == 'tfidf' else CountVectorizer(max_features=max_features)
     numeric_text = vectorizer.fit_transform(text_series)
