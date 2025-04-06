@@ -1,5 +1,3 @@
-from requirments.py import *
-
 def vectorize_text(text_series, vectorizer_type='tfidf', max_features=15000):
     vectorizer = TfidfVectorizer(max_features=max_features) if vectorizer_type == 'tfidf' else CountVectorizer(max_features=max_features)
     numeric_text = vectorizer.fit_transform(text_series)
